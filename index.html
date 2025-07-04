@@ -1,0 +1,315 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Sparkles, Heart, Star, Shirt, Palette, Crown } from "lucide-react"
+
+interface GameState {
+  hair: string
+  outfit: string
+  shoes: string
+  accessory: string
+  background: string
+}
+
+const gameOptions = {
+  hair: [
+    { id: "blonde-long", name: "Blonde Waves", color: "#FFD700" },
+    { id: "brunette-curly", name: "Brunette Curls", color: "#8B4513" },
+    { id: "pink-straight", name: "Pink Straight", color: "#FF69B4" },
+    { id: "purple-braids", name: "Purple Braids", color: "#9370DB" },
+  ],
+  outfits: [
+    { id: "pink-dress", name: "Pink Gown", color: "#FF1493" },
+    { id: "blue-casual", name: "Blue Casual", color: "#4169E1" },
+    { id: "purple-formal", name: "Purple Formal", color: "#8A2BE2" },
+    { id: "rainbow-party", name: "Rainbow Party", color: "linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4)" },
+  ],
+  shoes: [
+    { id: "pink-heels", name: "Pink Heels", color: "#FF69B4" },
+    { id: "sparkle-flats", name: "Sparkle Flats", color: "#C0C0C0" },
+    { id: "rainbow-boots", name: "Rainbow Boots", color: "linear-gradient(45deg, #FF6B6B, #4ECDC4)" },
+    { id: "gold-sandals", name: "Gold Sandals", color: "#FFD700" },
+  ],
+  accessories: [
+    { id: "tiara", name: "Diamond Tiara", icon: Crown },
+    { id: "necklace", name: "Pearl Necklace", icon: Sparkles },
+    { id: "earrings", name: "Star Earrings", icon: Star },
+    { id: "bracelet", name: "Heart Bracelet", icon: Heart },
+  ],
+  backgrounds: [
+    { id: "castle", name: "Dream Castle", color: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" },
+    { id: "beach", name: "Malibu Beach", color: "linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)" },
+    { id: "garden", name: "Rose Garden", color: "linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%)" },
+    { id: "city", name: "Fashion City", color: "linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)" },
+  ],
+}
+
+export default function BarbieGame() {
+  const [gameState, setGameState] = useState<GameState>({
+    hair: "blonde-long",
+    outfit: "pink-dress",
+    shoes: "pink-heels",
+    accessory: "tiara",
+    background: "castle",
+  })
+
+  const [score, setScore] = useState(0)
+  const [showCompliment, setShowCompliment] = useState(false)
+
+  const compliments = [
+    "Absolutely Fabulous! ✨",
+    "You're a Fashion Star! 🌟",
+    "Stunning Style! 💖",
+    "Perfect Look! 👑",
+    "Fashion Forward! 🎀",
+  ]
+
+  const updateStyle = (category: keyof GameState, value: string) => {
+    setGameState((prev) => ({ ...prev, [category]: value }))
+    setScore((prev) => prev + 10)
+    setShowCompliment(true)
+    setTimeout(() => setShowCompliment(false), 2000)
+  }
+
+  const randomizeOutfit = () => {
+    const randomHair = gameOptions.hair[Math.floor(Math.random() * gameOptions.hair.length)]
+    const randomOutfit = gameOptions.outfits[Math.floor(Math.random() * gameOptions.outfits.length)]
+    const randomShoes = gameOptions.shoes[Math.floor(Math.random() * gameOptions.shoes.length)]
+    const randomAccessory = gameOptions.accessories[Math.floor(Math.random() * gameOptions.accessories.length)]
+    const randomBackground = gameOptions.backgrounds[Math.floor(Math.random() * gameOptions.backgrounds.length)]
+
+    setGameState({
+      hair: randomHair.id,
+      outfit: randomOutfit.id,
+      shoes: randomShoes.id,
+      accessory: randomAccessory.id,
+      background: randomBackground.id,
+    })
+    setScore((prev) => prev + 50)
+    setShowCompliment(true)
+    setTimeout(() => setShowCompliment(false), 2000)
+  }
+
+  const currentBackground = gameOptions.backgrounds.find((bg) => bg.id === gameState.background)
+  const currentHair = gameOptions.hair.find((h) => h.id === gameState.hair)
+  const currentOutfit = gameOptions.outfits.find((o) => o.id === gameState.outfit)
+  const currentShoes = gameOptions.shoes.find((s) => s.id === gameState.shoes)
+  const currentAccessory = gameOptions.accessories.find((a) => a.id === gameState.accessory)
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-4">
+            ✨ Barbie Style Studio ✨
+          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <Badge variant="secondary" className="text-lg px-4 py-2 bg-pink-200 text-pink-800">
+              <Star className="w-4 h-4 mr-2" />
+              Style Points: {score}
+            </Badge>
+            {showCompliment && (
+              <Badge className="text-lg px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white animate-bounce">
+                {compliments[Math.floor(Math.random() * compliments.length)]}
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Barbie Display */}
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              <div
+                className="h-96 flex items-center justify-center relative"
+                style={{ background: currentBackground?.color }}
+              >
+                <div className="text-center">
+                  {/* Barbie Figure */}
+                  <div className="relative">
+                    {/* Hair */}
+                    <div
+                      className="w-20 h-16 rounded-full mx-auto mb-2 border-4 border-white shadow-lg"
+                      style={{ backgroundColor: currentHair?.color }}
+                    />
+
+                    {/* Face */}
+                    <div className="w-16 h-20 bg-gradient-to-b from-pink-200 to-pink-100 rounded-full mx-auto mb-2 border-2 border-pink-300 relative">
+                      <div className="absolute top-6 left-4 w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="absolute top-6 right-4 w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-pink-400 rounded-full"></div>
+                    </div>
+
+                    {/* Accessory */}
+                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                      {currentAccessory && <currentAccessory.icon className="w-6 h-6 text-yellow-400" />}
+                    </div>
+
+                    {/* Outfit */}
+                    <div
+                      className="w-24 h-32 mx-auto mb-2 rounded-lg border-4 border-white shadow-lg"
+                      style={{ background: currentOutfit?.color }}
+                    />
+
+                    {/* Shoes */}
+                    <div className="flex justify-center gap-2">
+                      <div
+                        className="w-6 h-4 rounded-full border-2 border-white"
+                        style={{ background: currentShoes?.color }}
+                      />
+                      <div
+                        className="w-6 h-4 rounded-full border-2 border-white"
+                        style={{ background: currentShoes?.color }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Style Options */}
+          <div className="space-y-6">
+            {/* Hair Styles */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-pink-600">
+                  <Palette className="w-5 h-5" />
+                  Hair Styles
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  {gameOptions.hair.map((hair) => (
+                    <Button
+                      key={hair.id}
+                      variant={gameState.hair === hair.id ? "default" : "outline"}
+                      className="h-12"
+                      onClick={() => updateStyle("hair", hair.id)}
+                    >
+                      <div className="w-4 h-4 rounded-full mr-2" style={{ backgroundColor: hair.color }} />
+                      {hair.name}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Outfits */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-purple-600">
+                  <Shirt className="w-5 h-5" />
+                  Outfits
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  {gameOptions.outfits.map((outfit) => (
+                    <Button
+                      key={outfit.id}
+                      variant={gameState.outfit === outfit.id ? "default" : "outline"}
+                      className="h-12"
+                      onClick={() => updateStyle("outfit", outfit.id)}
+                    >
+                      <div className="w-4 h-4 rounded mr-2" style={{ background: outfit.color }} />
+                      {outfit.name}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Shoes */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-blue-600">
+                  <Sparkles className="w-5 h-5" />
+                  Shoes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  {gameOptions.shoes.map((shoe) => (
+                    <Button
+                      key={shoe.id}
+                      variant={gameState.shoes === shoe.id ? "default" : "outline"}
+                      className="h-12"
+                      onClick={() => updateStyle("shoes", shoe.id)}
+                    >
+                      <div className="w-4 h-4 rounded mr-2" style={{ background: shoe.color }} />
+                      {shoe.name}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Accessories */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-yellow-600">
+                  <Crown className="w-5 h-5" />
+                  Accessories
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  {gameOptions.accessories.map((accessory) => (
+                    <Button
+                      key={accessory.id}
+                      variant={gameState.accessory === accessory.id ? "default" : "outline"}
+                      className="h-12"
+                      onClick={() => updateStyle("accessory", accessory.id)}
+                    >
+                      <accessory.icon className="w-4 h-4 mr-2" />
+                      {accessory.name}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Backgrounds */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-green-600">
+                  <Star className="w-5 h-5" />
+                  Backgrounds
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  {gameOptions.backgrounds.map((bg) => (
+                    <Button
+                      key={bg.id}
+                      variant={gameState.background === bg.id ? "default" : "outline"}
+                      className="h-12"
+                      onClick={() => updateStyle("background", bg.id)}
+                    >
+                      <div className="w-4 h-4 rounded mr-2" style={{ background: bg.color }} />
+                      {bg.name}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Random Style Button */}
+            <Button
+              onClick={randomizeOutfit}
+              className="w-full h-14 text-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 hover:from-pink-600 hover:via-purple-600 hover:to-blue-600"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Surprise Me! ✨
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
